@@ -330,9 +330,10 @@
         + [json_each](/sql-reference/sql-functions/json-functions/json-processing-functions/json_each.md)
         + [JSON 类型转换](/sql-reference/sql-functions/json-functions/json-processing-functions/cast-from-or-to-json.md)
       + [JSON 运算符](/sql-reference/sql-functions/json-functions/json-operators.md)
-      + [get_json_double](/sql-reference/sql-functions/json-functions/get_json_double.md)
-      + [get_json_int](/sql-reference/sql-functions/json-functions/get_json_int.md)
-      + [get_json_string](/sql-reference/sql-functions/json-functions/get_json_string.md)
+      + JSON 格式的字符串函数
+        + [get_json_int](/sql-reference/sql-functions/json-functions/get_json_int.md)
+        + [get_json_double](/sql-reference/sql-functions/json-functions/get_json_double.md)
+        + [get_json_string](/sql-reference/sql-functions/json-functions/get_json_string.md)
     + 模糊/正则匹配函数
       + [like](/sql-reference/sql-functions/like_predicate-functions/like.md)
       + [regexp](/sql-reference/sql-functions/like_predicate-functions/regexp.md)
