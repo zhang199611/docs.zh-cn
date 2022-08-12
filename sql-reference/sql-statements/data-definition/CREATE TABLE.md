@@ -277,10 +277,7 @@ CREATE [EXTERNAL] TABLE [IF NOT EXISTS] [database.]table_name
     DISTRIBUTED BY HASH (k1[,k2 ...]) [BUCKETS num]
     ```
 
-    说明：
-    使用指定的 key 列进行哈希分桶。默认分桶数为10。`DISTRIBUTED BY` 为必填字段。
-
-    建议:建议使用Hash分桶方式
+    说明：使用指定的 key 列进行哈希分桶。默认分桶数为10。`DISTRIBUTED BY` 为必填字段。有关如何确定分桶数量，请参见[数据分布](/table_design/Data_distribution#id-4-分桶数如何确定)。建议使用 Hash 分桶方式。
 
 4. PROPERTIES
 
@@ -378,7 +375,7 @@ CREATE [EXTERNAL] TABLE [IF NOT EXISTS] [database.]table_name
     ENGINE=olap
     AGGREGATE KEY(k1, k2)
     COMMENT "my first starrocks table"
-    DISTRIBUTED BY HASH(k1) BUCKETS 32
+    DISTRIBUTED BY HASH(k1) BUCKETS 10
     PROPERTIES ("storage_type"="column");
     ```
 
@@ -395,7 +392,7 @@ CREATE [EXTERNAL] TABLE [IF NOT EXISTS] [database.]table_name
     )
     ENGINE=olap
     UNIQUE KEY(k1, k2)
-    DISTRIBUTED BY HASH (k1, k2) BUCKETS 32
+    DISTRIBUTED BY HASH (k1, k2) BUCKETS 10
     PROPERTIES(
         "storage_type"="column"，
         "storage_medium" = "SSD",
@@ -415,7 +412,7 @@ CREATE [EXTERNAL] TABLE [IF NOT EXISTS] [database.]table_name
     )
     ENGINE=olap
     PRIMARY KEY(k1, k2)
-    DISTRIBUTED BY HASH (k1, k2) BUCKETS 32
+    DISTRIBUTED BY HASH (k1, k2) BUCKETS 10
     PROPERTIES(
         "storage_type"="column"，
         "storage_medium" = "SSD",
@@ -444,7 +441,7 @@ CREATE [EXTERNAL] TABLE [IF NOT EXISTS] [database.]table_name
     PARTITION p2 VALUES LESS THAN ("2014-06-01"),
     PARTITION p3 VALUES LESS THAN ("2014-12-01")
     )
-    DISTRIBUTED BY HASH(k2) BUCKETS 32
+    DISTRIBUTED BY HASH(k2) BUCKETS 10
     PROPERTIES(
         "storage_medium" = "SSD", "storage_cooldown_time" = "2015-06-04 00:00:00"
     );
@@ -479,7 +476,7 @@ CREATE [EXTERNAL] TABLE [IF NOT EXISTS] [database.]table_name
     PARTITION p1 VALUES [("2014-01-01", "10", "200"), ("2014-01-01", "20", "300")),
     PARTITION p2 VALUES [("2014-06-01", "100", "200"), ("2014-07-01", "100", "300"))
     )
-    DISTRIBUTED BY HASH(k2) BUCKETS 32
+    DISTRIBUTED BY HASH(k2) BUCKETS 10
     PROPERTIES(
         "storage_medium" = "SSD"
     );
@@ -520,7 +517,7 @@ CREATE [EXTERNAL] TABLE [IF NOT EXISTS] [database.]table_name
     )
     ENGINE=olap
     AGGREGATE KEY(k1, k2)
-    DISTRIBUTED BY HASH(k1) BUCKETS 32
+    DISTRIBUTED BY HASH(k1) BUCKETS 10
     PROPERTIES ("storage_type"="column");
     ```
 
@@ -536,7 +533,7 @@ CREATE [EXTERNAL] TABLE [IF NOT EXISTS] [database.]table_name
     )
     ENGINE=olap
     AGGREGATE KEY(k1, k2)
-    DISTRIBUTED BY HASH(k1) BUCKETS 32
+    DISTRIBUTED BY HASH(k1) BUCKETS 10
     PROPERTIES ("storage_type"="column");
     ```
 
@@ -578,7 +575,7 @@ CREATE [EXTERNAL] TABLE [IF NOT EXISTS] [database.]table_name
     ENGINE=olap
     AGGREGATE KEY(k1, k2)
     COMMENT "my first starrocks table"
-    DISTRIBUTED BY HASH(k1) BUCKETS 32
+    DISTRIBUTED BY HASH(k1) BUCKETS 10
     PROPERTIES ("storage_type"="column");
     ```
 
@@ -608,57 +605,18 @@ CREATE [EXTERNAL] TABLE [IF NOT EXISTS] [database.]table_name
     PARTITION p2 VALUES LESS THAN ("2014-06-01"),
     PARTITION p3 VALUES LESS THAN ("2014-12-01")
     )
-    DISTRIBUTED BY HASH(k2) BUCKETS 32
+    DISTRIBUTED BY HASH(k2) BUCKETS 10
     PROPERTIES(
         "storage_medium" = "SSD",
         "dynamic_partition.time_unit" = "DAY",
         "dynamic_partition.start" = "-3",
         "dynamic_partition.end" = "3",
         "dynamic_partition.prefix" = "p",
-        "dynamic_partition.buckets" = "32"
+        "dynamic_partition.buckets" = "10"
     );
     ```
 
-10. 创建一个带 rollup 的表
-
-    ```sql
-    CREATE TABLE example_db.rolup_index_table
-    (
-    event_day DATE,
-    siteid INT DEFAULT '10',
-    citycode SMALLINT,
-    username VARCHAR(32) DEFAULT '',
-    pv BIGINT SUM DEFAULT '0'
-    )
-    AGGREGATE KEY(event_day, siteid, citycode, username)
-    DISTRIBUTED BY HASH(siteid) BUCKETS 10
-    rollup (
-    r1(event_day,siteid),
-    r2(event_day,citycode),
-    r3(event_day)
-    )
-    PROPERTIES("replication_num" = "3");
-    ```
-
-11. 创建一个内存表
-
-    ```sql
-    CREATE TABLE example_db.table_hash
-    (
-    k1 TINYINT,
-    k2 DECIMAL(10, 2) DEFAULT "10.5",
-    v1 CHAR(10) REPLACE,
-    v2 INT SUM,
-    INDEX k1_idx (k1) USING BITMAP COMMENT 'xxxxxx'
-    )
-    ENGINE=olap
-    AGGREGATE KEY(k1, k2)
-    COMMENT "my first starrocks table"
-    DISTRIBUTED BY HASH(k1) BUCKETS 32
-    PROPERTIES ("in_memory"="true");
-    ```
-
-12. 创建一个hive外部表
+10. 创建一个hive外部表
 
     ```SQL
     CREATE TABLE example_db.table_hive
