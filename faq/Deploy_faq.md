@@ -147,4 +147,5 @@ netstat  -anp  |grep  port
 
 ## 查询报错 could not initialize class com.starrocks.rpc.BackendServiceProxy
 
-以上错误是因为使用的 jre 而不是 jdk，请确认 $JAVA_HOME 是否使用的 jdk。
+* 请确认 $JAVA_HOME 是否使用的 jdk，需要使用 jdk
+* 请确认 所有节点的 jdk 是否是同一个版本，需要使用相同版本的 jdk
