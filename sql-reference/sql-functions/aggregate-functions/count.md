@@ -24,19 +24,19 @@ COUNT(DISTINCT expr [,expr,...])
 
 假设有表test, 按照订单id展示每个订单的国家、商品类别、供应商代号。
 
-```sql
-select * from test order by id;
-+------+----------+----------+------------+
-| id   | country  | category | supplier   |
-+------+----------+----------+------------+
-| 1001 | US       | A        | supplier_1 |
-| 1002 | Thailand | A        | supplier_2 |
-| 1003 | Turkey   | B        | supplier_3 |
-| 1004 | US       | A        | supplier_2 |
-| 1005 | China    | C        | supplier_4 |
-| 1006 | Japan    | D        | supplier_3 |
-+------+----------+----------+------------+
-```
+  ```sql
+  select * from test order by id;
+  +------+----------+----------+------------+
+  | id   | country  | category | supplier   |
+  +------+----------+----------+------------+
+  | 1001 | US       | A        | supplier_1 |
+  | 1002 | Thailand | A        | supplier_2 |
+  | 1003 | Turkey   | B        | supplier_3 |
+  | 1004 | US       | A        | supplier_2 |
+  | 1005 | China    | C        | supplier_4 |
+  | 1006 | Japan    | D        | supplier_3 |
+  +------+----------+----------+------------+
+  ```
 
 1. 查看共有多少订单
 
