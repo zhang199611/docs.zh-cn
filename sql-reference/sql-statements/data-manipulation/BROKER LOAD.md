@@ -264,7 +264,7 @@ WITH BROKER my_hdfs_broker
 ```sql
 LOAD LABEL example_db.label4
 (
-    DATA INFILE("hdfs://hdfs_host:hdfs_port/user/starRocks/data/input/old_file)
+    DATA INFILE("hdfs://hdfs_host:hdfs_port/user/starRocks/data/input/old_file")
     NEGATIVE
     INTO TABLE `my_table`
     COLUMNS TERMINATED BY "\t"
