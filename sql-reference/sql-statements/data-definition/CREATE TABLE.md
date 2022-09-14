@@ -353,16 +353,6 @@ CREATE [EXTERNAL] TABLE [IF NOT EXISTS] [database.]table_name
     [PROPERTIES ("key"="value", ...)],...)
     ```
 
-    6.如果希望使用 内存表 特性，需要在 properties 中指定
-
-    ```sql
-    PROPERTIES (
-        "in_memory"="true"
-    )
-    ```
-
-    当 in_memory 属性为 true 时，StarRocks会尽可能将该表的数据和索引Cache到BE 内存中
-
 ## example
 
 1. 创建一个 olap 表，使用 HASH 分桶，使用列存，相同key的记录进行聚合
