@@ -148,4 +148,3 @@
 - 部署或者升级至 2.3 版本，默认开启 Pipeline 执行引擎，预期在高并发小查询、复杂大查询场景下获得明显的性能优势。如果使用 2.3 版本时遇到明显的性能回退，则可以通过设置 `SET GLOBAL enable_pipeline_engine = false;`，关闭 Pipeline 执行引擎。
 - [SHOW GRANTS](../sql-reference/sql-statements/account-management/SHOW%20GRANTS.md) 语句兼容 MySQL语法，显示授权 GRANT 语句。
 - 建议单个 schema change 任务数据占用内存上限memory_limitation_per_thread_for_schema_change( BE 配置项) 保持为默认值 2 GB，数据超过上限后写入磁盘。因此如果您之前调大该参数，则建议恢复为 2 GB，否则可能会出现单个 schema change 任务数据占用大量内存的问题。
-
