@@ -1,5 +1,25 @@
 # StarRocks version 2.3
 
+## 2.3.3
+
+发布日期： 2022 年 9 月 27 日
+
+### 问题修复
+
+- 修复查询文件格式为 TEXTFILE 的 Hive 表，结果不准确的问题。[#11546](https://github.com/StarRocks/starrocks/pull/11546)
+
+- 修复查询 Parquet 格式的文件时不支持查询嵌套的 ARRAY 的问题。[#10983](https://github.com/StarRocks/starrocks/pull/10983)
+
+- 修复一个查询读取外部数据源和 StarRocks 表，或者并行查询读取外部数据源和 StarRocks 表，并且查询路由至一个资源组，则可能会导致查询超时的问题。[#10983](https://github.com/StarRocks/starrocks/pull/10983)
+
+- 修复默认开启 Pipeline 执行引擎后，参数 parallel_fragment_exec_instance_num 变为  1，导致 INSERT INTO 导入变慢的问题。[#11462](https://github.com/StarRocks/starrocks/pull/11462)
+
+- 修复表达式在初始阶段发生错误时可能导致 BE 停止服务的问题。[#11396](https://github.com/StarRocks/starrocks/pull/11396)
+
+- 修复执行 ORDER BY LIMIT 时导致堆溢出的问题。 [#11185](https://github.com/StarRocks/starrocks/pull/11185)
+
+- 修复重启 Leader FE，会造成 schema change 执行失败的问题。 [#11561](https://github.com/StarRocks/starrocks/pull/11561)
+
 ## 2.3.2
 
 发布日期： 2022 年 9 月 7 日
