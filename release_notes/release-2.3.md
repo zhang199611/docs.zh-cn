@@ -6,7 +6,7 @@
 
 ### 问题修复
 
-- 修复查询文件格式为 TEXTFILE 的 Hive 表，结果不准确的问题。[#11546](https://github.com/StarRocks/starrocks/pull/11546)
+- 修复查询文件格式为 Textfile 的 Hive 表，结果不准确的问题。[#11546](https://github.com/StarRocks/starrocks/pull/11546)
 
 - 修复查询 Parquet 格式的文件时不支持查询嵌套的 ARRAY 的问题。[#10983](https://github.com/StarRocks/starrocks/pull/10983)
 
