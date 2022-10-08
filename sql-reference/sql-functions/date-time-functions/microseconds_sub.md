@@ -7,7 +7,7 @@
 ## 语法
 
 ```Haskell
-microseconds_sub(expr1,expr2);
+DATETIME microseconds_sub(DATETIME expr1,INT expr2);
 ```
 
 ## 参数说明
@@ -23,7 +23,7 @@ microseconds_sub(expr1,expr2);
 ## 示例
 
 ```Plain Text
-mysql> select microseconds_sub('2010-11-30 23:50:50', 2);
+select microseconds_sub('2010-11-30 23:50:50', 2);
 +--------------------------------------------+
 | microseconds_sub('2010-11-30 23:50:50', 2) |
 +--------------------------------------------+

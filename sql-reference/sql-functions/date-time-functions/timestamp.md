@@ -7,7 +7,7 @@
 ## 语法
 
 ```Haskell
-timestamp(expr);
+DATETIME timestamp(DATETIME expr);
 ```
 
 ## 参数说明
@@ -21,7 +21,7 @@ timestamp(expr);
 ## 示例
 
 ```Plain Text
-mysql> select timestamp("2019-05-27");
+select timestamp("2019-05-27");
 +-------------------------+
 | timestamp('2019-05-27') |
 +-------------------------+

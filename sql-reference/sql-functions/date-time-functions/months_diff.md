@@ -7,7 +7,7 @@
 ## 语法
 
 ```Haskell
-months_diff(expr1,expr2);
+BIGINT months_diff(DATETIME expr1, DATETIME expr2);
 ```
 
 ## 参数说明
@@ -23,7 +23,7 @@ months_diff(expr1,expr2);
 ## 示例
 
 ```Plain Text
-mysql> select months_diff('2010-11-30 23:59:59', '2010-1-1 23:59:59');
+select months_diff('2010-11-30 23:59:59', '2010-1-1 23:59:59');
 +---------------------------------------------------------+
 | months_diff('2010-11-30 23:59:59', '2010-1-1 23:59:59') |
 +---------------------------------------------------------+

@@ -2,16 +2,18 @@
 
 ## 功能
 
-获取当前的时间，以TIME类型返回.
+获取当前的时间，以TIME类型返回。
 
 ## 语法
 
-`TIME CURTIME()`
+```Haskell
+TIME CURTIME()
+```
 
 ## 示例
 
 ```Plain Text
-MySQL > select current_time();
+select current_time();
 +----------------+
 | current_time() |
 +----------------+

@@ -7,7 +7,7 @@
 ## 语法
 
 ```Haskell
-quarter(expr);
+INT quarter(DATETIME expr);
 ```
 
 ## 参数说明
@@ -21,7 +21,7 @@ quarter(expr);
 ## 示例
 
 ```Plain Text
-mysql> select quarter("2019-05-27 15:59:33");
+select quarter("2019-05-27 15:59:33");
 +--------------------------------+
 | quarter('2019-05-27 15:59:33') |
 +--------------------------------+

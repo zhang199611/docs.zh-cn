@@ -7,7 +7,7 @@
 ## 语法
 
 ```Haskell
-minutes_diff(expr1,expr2);
+BIGINT minutes_diff(DATETIME expr1, DATETIME expr2);
 ```
 
 ## 参数说明
@@ -23,7 +23,7 @@ minutes_diff(expr1,expr2);
 ## 示例
 
 ```Plain Text
-mysql> select minutes_diff('2010-11-30 23:59:59', '2010-11-30 20:59:59');
+select minutes_diff('2010-11-30 23:59:59', '2010-11-30 20:59:59');
 +------------------------------------------------------------+
 | minutes_diff('2010-11-30 23:59:59', '2010-11-30 20:59:59') |
 +------------------------------------------------------------+
