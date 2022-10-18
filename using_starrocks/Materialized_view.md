@@ -414,9 +414,9 @@ FROM tableA
 >
 > StarRocks 2.4 之前版本不支持以下功能。
 
-2.4 版本中，StarRocks 进一步支持异步多表物化视图，方便您通过创建物化视图的方式为数据仓库进行建模。
+2.4 版本中，StarRocks 进一步支持异步多表物化视图，方便您通过创建物化视图的方式为数据仓库进行建模。异步物化视图支持所有[数据模型](../table_design/Data_model.md)。
 
-目前，StarRocks 支持以下三种物化视图刷新方式：
+目前，StarRocks 支持以下两种多表物化视图刷新方式：
 
 - **异步刷新**：这种刷新方式通过异步刷新任务实现物化视图数据的刷新，不保证物化视图与源表之间的数据强一致。该方式支持从多张表构建物化视图。
 
@@ -597,6 +597,8 @@ REFRESH MATERIALIZED VIEW order_mv;
 >
 > 您可以对异步刷新和手动刷新方式的物化视图手动调用物化视图，但不能通过该命令手动刷新单表同步刷新方式的物化视图。
 
+您可以通过 [CANCEL REFRESH MATERIALIZED VIEW](../sql-reference/sql-statements/data-manipulation/CANCEL%20REFRESH%20MATERIALIZED%20VIEW.md) 命令手动刷新特定物化视图。
+
 ### 查看多表物化视图的执行状态
 
 您可以通过以下方式查看数据仓库内多表物化视图的执行状态。
@@ -620,12 +622,6 @@ DROP MATERIALIZED VIEW order_mv;
 
 ### 注意事项
 
-- 单表同步刷新物化视图有如下的限制：
-  - 您只能基于单表创建同步刷新物化视图，不能 join 多表构建。
-  - 您不能改变同步刷新物化视图的分区方式和分桶方式，必须跟基表保持一致。
-  - 您不能直接查询同步刷新物化视图。
-  - 同步刷新物化视图不支持 WHERE 子句。
-  - 同步刷新物化视图支持的聚合函数有限制，仅包括 sum、min、max、count、bitmap_union、hll_union 以及 percentile_union。
 - 异步刷新物化视图有如下特性：
   - 您可以直接查询异步刷新物化视图，但结果可能与源表不一致。
   - 您可以为异步刷新物化视图设定与基表不同的分区方式和分桶方式。

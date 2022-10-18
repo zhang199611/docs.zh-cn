@@ -10,8 +10,6 @@
 INSTALL PLUGIN FROM [source] [PROPERTIES ("key"="value", ...)]
 ```
 
-注：方括号 [] 中内容可省略不写。
-
 **source 支持三种类型：**
 
 ```plain text
@@ -22,7 +20,7 @@ INSTALL PLUGIN FROM [source] [PROPERTIES ("key"="value", ...)]
 
 **PROPERTIES：**
 
-支持设置插件的一些配置, 如设置 zip 文件的 md5sum 的值等。
+支持设置插件的一些配置，如设置 zip 文件的 md5sum 的值等。
 
 ## 示例
 
@@ -44,7 +42,7 @@ INSTALL PLUGIN FROM [source] [PROPERTIES ("key"="value", ...)]
     INSTALL PLUGIN FROM "http://mywebsite.com/plugin.zip";
     ```
 
-4. 下载并安装一个插件, 同时设置了 zip 文件的 md5sum 的值：
+4. 下载并安装一个插件，同时设置了 zip 文件的 md5sum 的值：
 
     ```sql
     INSTALL PLUGIN FROM "http://mywebsite.com/plugin.zip" PROPERTIES("md5sum" = "73877f6029216f4314d712086a146570");

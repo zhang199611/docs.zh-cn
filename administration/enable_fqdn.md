@@ -18,27 +18,19 @@ StarRocks v2.4 之前版本仅支持通过 IP 地址访问每个节点。即便�
 
 如需建立启用 FQDN 访问的新集群，您需要安装 StarRocks v2.4.0 或更高版本。有关如何安装 StarRocks 的详细说明，请参阅 [手动部署 StarRocks](../quick_start/Deploy.md)。
 
-在 StarRocks 2.4 或更高版本中，新集群中的 FE 节点在启动时默认启用 FQDN 访问。
+新集群中的 FE 节点在启动时默认启用 IP 地址访问。
 
 新集群中的 BE 节点将通过 FE 元数据中定义的 `BE Address` 判定使用 FQDN 或 IP 地址标识自身。例如，如果 `BE Address` 记录了一个 BE 节点的 FQDN，则该 BE 节点使用这个 FQDN 来标识自身。
 
 因此，如需在启动新节点时启用 FQDN 访问，您无需在 FE 和 BE 配置文件 **fe.conf** 和 **be.conf** 中指定属性 `priority_networks`。在满足前提条件中的要求后，您可以按照 [手动部署 StarRocks](../quick_start/Deploy.md) 中的说明启动各节点。
 
-如果您需要在启动新节点时启用 IP 地址访问，您仍然需要在启动节点之前在相应的 FE 和 BE 配置文件中指定属性 `priority_networks`。除此之外，由于启动时默认不采用 IP 地址访问，您必须通过以下命令启动各节点：
+如果您需要在启动新节点时启用 IP 地址访问，您仍然需要在启动节点之前在相应的 FE 和 BE 配置文件中指定属性 `priority_networks`。除此之外，由于启动时默认不采用 IP 地址访问，您必须通过以下命令启动 FE 节点：
 
-- 启动使用 IP 地址访问的 FE 节点：
+```Shell
+sh bin/start_fe.sh --host_type IP --daemon
+```
 
-  ```Shell
-  sh bin/start_fe.sh --host_type IP --daemon
-  ```
-
-- 启动使用 IP 地址访问的 BE 节点：
-
-  ```Shell
-  sh bin/start_be.sh --host_type IP --daemon
-  ```
-
-  `--host_type` 属性用于指定该节点的访问方式。有效值包括 `FQDN` 和 `IP`。您只需在第一次启动节点时指定该属性。
+`--host_type` 属性用于指定该节点的访问方式。有效值包括 `FQDN` 和 `IP`。您只需在第一次启动节点时指定该属性。
 
 ## 旧集群启用 FQDN 访问
 

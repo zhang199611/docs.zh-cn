@@ -85,12 +85,13 @@ StarRocks 提供灵活的信息采集方式，您可以根据业务场景选择�
 
 ### 手动采集
 
-可以通过 ANALYZE TABLE 语句创建手动采集任务。**手动采集是异步命令，执行命令后，会立即返回命令的状态，但是统计信息采集任务会在后台运行，运行的状态可以使用 SHOW ANALYZE STATUS 查看。手动任务创建后仅会执行一次，无需手动删除。**
+可以通过 ANALYZE TABLE 语句创建手动采集任务。**手动采集默认为同步操作。您也可以将手动任务设置为异步，执行命令后，系统会立即返回命令的状态，但是统计信息采集任务会异步在后台运行。异步采集适用于表数据量大的场景，同步采集适用于表数据量小的场景。** 手动任务创建后仅会执行一次，无需手动删除。运行状态可以使用 SHOW ANALYZE STATUS 查看。
 
 #### 手动采集基础统计信息
 
 ```SQL
 ANALYZE [FULL|SAMPLE] TABLE tbl_name (col_name [,col_name])
+[WITH SYNC | ASYNC MODE]
 PROPERTIES (property [,property]);
 ```
 
@@ -100,6 +101,8 @@ PROPERTIES (property [,property]);
   - FULL：全量采集。
   - SAMPLE：抽样采集。
   - 如果不指定采集类型，默认为全量采集。
+
+- `WITH SYNC | ASYNC MODE`: 如果不指定，默认为同步采集。
 
 - `col_name`: 要采集统计信息的列，多列使用逗号分隔。如果不指定，表示采集整张表的信息。
 
@@ -139,12 +142,17 @@ ANALYZE SAMPLE TABLE tbl_name (v1, v2, v3) PROPERTIES(
 #### 手动采集直方图统计信息
 
 ```SQL
-ANALYZE TABLE tbl_name UPDATE HISTOGRAM ON col_name [, col_name] [WITH N BUCKETS]PROPERTIES (property [,property]);
+ANALYZE TABLE tbl_name UPDATE HISTOGRAM ON col_name [, col_name]
+[WITH SYNC | ASYNC MODE]
+[WITH N BUCKETS]
+PROPERTIES (property [,property]);
 ```
 
 参数说明：
 
 - `col_name`: 要采集统计信息的列，多列使用逗号分隔。该参数必填。
+
+- `WITH SYNC | ASYNC MODE`: 如果不指定，默认为同步采集。
 
 - `WITH ``N`` BUCKETS`: `N`为直方图的分桶数。如果不指定，则使用`fe.conf`中的默认值。
 
@@ -366,9 +374,9 @@ ANALYZE TABLE tbl_name DROP HISTOGRAM ON col_name [, col_name];
 
 ## 取消采集任务
 
-您可以通过 KILL ANALYZE 语句取消正在运行中（Running）的统计信息收集任务。
+您可以通过 KILL ANALYZE 语句取消正在运行中（Running）的统计信息采集任务，包括手动采集任务和自定义自动采集任务。
 
-任务 ID 可以在 SHOW ANALYZE STATUS 中查看。
+手动采集任务的任务 ID 可以在 SHOW ANALYZE STATUS 中查看。自定义自动采集任务的任务 ID 可以在 SHOW ANALYZE JOB 中查看。
 
 ```SQL
 KILL ANALYZE <ID>;
@@ -384,7 +392,7 @@ KILL ANALYZE <ID>;
 | statistic_max_full_collect_data_size | LONG     | 100        | 自动统计信息采集的最大分区大小。单位：GB。如果超过该值，则放弃全量采集，转为对该表进行抽样采集。 |
 | statistic_collect_interval_sec       | LONG     | 300        | 自动定期任务中，检测数据更新的间隔时间，默认为 5 分钟。单位：秒。 |
 | statistic_sample_collect_rows        | LONG     | 200000     | 最小采样行数。如果指定了采集类型为抽样采集（SAMPLE），需要设置该参数。如果参数取值超过了实际的表行数，默认进行全量采集。 |
-| statistic_collect_concurrency        | INT      | 3          |手动采集任务的最大并发数，默认为3，即最多可以有3个手动采集任务同时运行。超出的任务处于PENDING状态，等待调度。|
+| statistic_collect_concurrency        | INT      | 3          |手动采集任务的最大并发数，默认为 3，即最多可以有 3 个手动采集任务同时运行。超出的任务处于 PENDING 状态，等待调度。注意如果修改了该配置项，需要重启 FE 后配置才能生效。|
 | histogram_buckets_size               | LONG     | 64         | 直方图默认分桶数。                                           |
 | histogram_mcv_size                   | LONG     | 100        | 直方图默认most common value的数量。                          |
 | histogram_sample_ratio               | FLOAT    | 0.1        | 直方图默认采样比例。                                         |

@@ -74,6 +74,7 @@ DISTRIBUTED BY HASH(user_id) BUCKETS 8;
 ### 使用说明
 
 - 排序键的相关说明：
+  - 在建表语句中，排序键必须定义在其他列之前。
   - 排序键可以通过 `DUPLICATE KEY` 显式定义。本示例中排序键为`event_time`和`event_type`。
     > 如果未指定，则默认选择表的前三列作为排序键。
 
@@ -159,6 +160,7 @@ DISTRIBUTED BY HASH(site_id) BUCKETS 8;
 ### 使用说明
 
 - 排序键的相关说明：
+  - 在建表语句中，排序键必须定义在其他列之前。
   - 排序键可以通过 `AGGREGATE KEY` 显式定义。
 
     > - 如果 `AGGREGATE KEY` 未包含全部维度列（除指标列之外的列），则建表会失败。
@@ -233,6 +235,7 @@ DISTRIBUTED BY HASH(order_id) BUCKETS 8;
 ### 使用说明
 
 - 主键的相关说明：
+  - 在建表语句中，主键必须定义在其他列之前。
   - 主键通过 `UNIQUE KEY` 定义。
   - 主键必须满足唯一性约束，且列的值不会修改。
   - 设置合理的主键。
@@ -341,6 +344,7 @@ PROPERTIES("replication_num" = "3",
 ### 使用说明
 
 - 主键相关的说明：
+  - 在建表语句中，主键必须定义在其他列之前。
   - 主键通过 `PRIMARY KEY` 定义。
   - 主键必须满足唯一性约束，且列的值不会修改。本示例中主键为 `dt`、`order_id`。
   - 支持主键的数据类型为 BOOLEAN、TINYINT、SMALLINT、INT、BIGINT、LARGEINT、STRING、VARCHAR、DATE、DATETIME，且不允许为 NULL。
@@ -353,7 +357,6 @@ PROPERTIES("replication_num" = "3",
 - `enable_persistent_index`：是否持久化主键索引，同时使用磁盘和内存存储主键索引，避免主键索引占用过大内存空间。通常情况下，持久化主键索引后，主键索引所占内存为之前的 1/10。您可以在建表时，在`PROPERTIES`中配置该参数，取值范围为 `true` 或者 `false`（默认值）。
 
    > - 建表后，如果您需要修改该参数，请参见 ALTER TABLE [修改表的属性](../sql-reference/sql-statements/data-definition/ALTER%20TABLE.md#修改-table-的属性) 。
-   > - 主键必须为定长的数据类型（CHAR 除外），不支持为可变长的数据类型（例如 VARCHAR）。
    > - 如果磁盘为固态硬盘 SSD，则建议设置为 `true`。
    > - 自 2.3.0 版本起，StarRocks 支持配置该参数。
 

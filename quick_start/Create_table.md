@@ -86,7 +86,7 @@ StarRocks 表中支持多种字段类型，除以上示例中已经列举的字�
 
 #### 分区分桶
 
-`PARTITION` 关键字用于给表 [创建分区](/sql-reference/sql-statements/data-definition/CREATE%20TABLE.md#partition_desc)。以上示例中使用 `recruit_date` 进行范围分区，从 11 日到 15 日每天创建一个分区。StarRocks 支持动态生成分区，详见 [动态分区管理](/table_design/Data_distribution.md#动态分区管理)。
+`PARTITION` 关键字用于给表 [创建分区](/sql-reference/sql-statements/data-definition/CREATE%20TABLE.md#partition_desc)。以上示例中使用 `recruit_date` 进行范围分区，从 11 日到 15 日每天创建一个分区。StarRocks 支持动态生成分区，详见 [动态分区管理](/table_design/Data_distribution.md#动态分区管理)。**为了优化生产环境的查询性能，我们强烈建议您为表制定合理的数据分区计划。**
 
 `DISTRIBUTED` 关键字用于给表 [创建分桶](/sql-reference/sql-statements/data-definition/CREATE%20TABLE.md#distribution_desc)，以上示例中使用 `recruit_date` 以及 `region_num` 两个字段通过 Hash 算法创建 8 个桶。
 
@@ -177,7 +177,7 @@ SHOW ALTER TABLE COLUMN\G;
 
 当作业状态为 FINISHED，则表示作业完成，新的表结构修改已生效。
 
-修改 Schema 完成之后, 您可以通过以下命令查看最新的表结构。
+修改 Schema 完成之后，您可以通过以下命令查看最新的表结构。
 
 ```sql
 DESC table_name;
@@ -229,7 +229,7 @@ CREATE USER 'test' IDENTIFIED by '123456';
 GRANT ALL on example_db to test;
 ```
 
-通过登录被授权的 `test` 账户,其他用户就可以操作 `example_db` 数据库了。
+通过登录被授权的 `test` 账户，就可以操作 `example_db` 数据库。
 
 ```bash
 mysql -h 127.0.0.1 -P9030 -utest -p123456

@@ -20,8 +20,6 @@ CREATE [EXTERNAL] TABLE [IF NOT EXISTS] [database.]table_name
 [BROKER PROPERTIES ("key"="value", ...)]
 ```
 
-注：方括号 [] 中内容可省略不写。
-
 ## 参数说明
 
 ### **column_definition**
@@ -386,18 +384,6 @@ ROLLUP (rollup_name (column_name1, column_name2, ...)
 [FROM from_index_name]
 [PROPERTIES ("key" = "value", ...)],...)
 ```
-
-#### 创建表时增加内存表特性
-
-如果希望使用 内存表 特性，需要在 properties 中指定
-
-``` sql
-PROPERTIES (
-    "in_memory" = "true"
-)
-```
-
-当 in_memory 属性为 true 时，StarRocks 会尽可能将该表的数据和索引 Cache 到 BE 内存中
 
 ## 示例
 

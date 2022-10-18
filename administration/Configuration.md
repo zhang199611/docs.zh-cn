@@ -4,11 +4,11 @@
 
 ## 配置 FE 参数
 
-部分 FE 节点配置项为动态参数，您可以通过命令在线修改。其他配置项为静态参数，需要通过修改 **fe.conf** 文件后重启 FE 服务使相关修改生效。
+部分 FE 节点配置项为动态参数，您可以通过命令在线修改。其他配置项为静态参数，需要通过修改 **fe.conf** 文件后**重启 FE 服务**使相关修改生效。
 
 ### 配置 FE 动态参数
 
-您可以通过一下命令在线修改 FE 节点动态参数。
+您可以通过以下命令在线修改 FE 节点动态参数。
 
 ~~~sql
 ADMIN SET FRONTEND CONFIG ("key" = "value");
@@ -58,11 +58,19 @@ ADMIN SET FRONTEND CONFIG ("key" = "value");
 |max_create_table_timeout_second|600|建表最大超时时间，单位为秒。|
 |max_running_rollup_job_num_per_table|1|每个 Table 执行 Rollup 任务的最大并发度。|
 |max_planner_scalar_rewrite_num|100000|优化器重写 ScalarOperator 允许的最大次数。|
-|statistics_manager_sleep_time_sec|60*10|自动创建统计信息表的周期，单位为秒。|
-|statistic_collect_interval_sec|120 \* 60|统计信息功能执行周期，单位为秒。|
-|statistic_update_interval_sec|24 \* 60 \* 60|统计信息 Job 的默认收集间隔时间，单位为秒。|
-|statistic_sample_collect_rows|200000|采样统计信息 Job 的默认采样行数。|
-|enable_statistic_collect|TRUE|统计信息收集功能开关。|
+|enable_statistic_collect|TRUE|是否采集统计信息，该开关默认打开。|
+|enable_collect_full_statistic|TRUE|是否开启自动全量统计信息采集，该开关默认打开。|
+|statistic_auto_collect_ratio|0.8|自动统计信息的健康度阈值。如果统计信息的健康度小于该阈值，则触发自动采集。|
+|statistic_max_full_collect_data_size|100|自动统计信息采集的最大分区大小。单位：GB。如果超过该值，则放弃全量采集，转为对该表进行抽样采集。|
+|statistic_collect_interval_sec|300|自动定期采集任务中，检测数据更新的间隔时间，默认为 5 分钟。单位：秒。|
+|statistic_sample_collect_rows|200000|最小采样行数。如果指定了采集类型为抽样采集（SAMPLE），需要设置该参数。如果参数取值超过了实际的表行数，默认进行全量采集。|
+|histogram_buckets_size|64|直方图默认分桶数。|
+|histogram_mcv_size|100|直方图默认most common value的数量。|
+|histogram_sample_ratio|0.1|直方图默认采样比例。|
+|histogram_max_sample_row_count|10000000|直方图最大采样行数。|
+|statistics_manager_sleep_time_sec|60|统计信息相关元数据调度间隔周期。单位：秒。系统根据这个间隔周期，来执行如下操作：创建统计信息表；删除已经被删除的表的统计信息；删除过期的统计信息历史记录。|
+|statistic_update_interval_sec|24 \* 60 \* 60|统计信息内存Cache失效时间。单位：秒。|
+|statistic_analyze_status_keep_second|259200|统计信息采集任务的记录保留时间，默认为 3 天。单位：秒。|
 |enable_local_replica_selection|FALSE|优化器优先选择与这个 FE 相同 IP 的 BE 节点上的 tablet。|
 |max_distribution_pruner_recursion_depth|100|分区裁剪允许的最大递归深度。|
 
@@ -153,47 +161,45 @@ ADMIN SET FRONTEND CONFIG ("key" = "value");
 
 |配置项|默认值|描述|
 |---|---|---|
-|log_roll_size_mb|1024|日志拆分的大小，每 1G 拆分一个日志，单位为 MB。|
-|sys_log_dir|StarRocksFE.STARROCKS_HOME_DIR + "/log"|日志保留的目录。|
-|sys_log_level|INFO|日志级别，INFO < WARN < ERROR < FATAL。|
-|sys_log_verbose_modules|空字符串|日志打印的模块，写 org.apache.starrocks.catalog 就只打印 catalog 模块下的日志。|
-|sys_log_roll_interval|DAY|日志拆分的时间间隔。|
-|sys_log_delete_age|7d|日志删除的间隔。|
-|sys_log_roll_mode|SIZE-MB-1024|日志拆分的大小，每 1G 拆分一个日志。|
-|sys_log_roll_num|10|每个 sys_log_roll_interval 时间内，保留的日志文件数目。|
-|audit_log_dir|StarRocksFE.STARROCKS_HOME_DIR + "/log"|审计日志保留的目录。|
+|log_roll_size_mb|1024|日志拆分的大小，每 1 GB 拆分为一个日志文件。单位：MB。|
+|sys_log_dir|StarRocksFE.STARROCKS_HOME_DIR + "/log"|系统日志文件的保留目录。|
+|sys_log_level|INFO|系统日志的级别，从低到高依次为 `INFO`、`WARN`、`ERROR`、`FATAL`。|
+|sys_log_verbose_modules|空字符串|系统日志打印的模块，写 `org.apache.starrocks.catalog` 就只打印 Catalog 模块下的日志。|
+|sys_log_roll_interval|DAY|系统日志拆分的时间间隔。取值范围： `DAY` 和 `HOUR`。<ul><li>取值为 `DAY` 时，日志文件名的后缀为 `yyyyMMdd`。</li><li>取值为 `HOUR` 时，日志文件名的后缀为 `yyyyMMddHH`。</li></ul>|
+|sys_log_delete_age|7d|系统日志删除的间隔。|
+|sys_log_roll_num|10|每个 `sys_log_roll_interval` 时间段内，保留的系统日志文件的数目。|
+|audit_log_dir|StarRocksFE.STARROCKS_HOME_DIR + "/log"|审计日志文件的保留目录。|
 |audit_log_roll_num|90|审计日志保留的数目。|
-|audit_log_modules|"slow_query", "query"|审计日志打印的模块，默认保留 slow_query 和 query。|
-|audit_log_roll_interval|DAY|审计日志拆分的时间间隔, DAY 或者 HOUR。|
+|audit_log_modules|slow_query, query|审计日志打印的模块。默认打印 `slow_query` 和 `query` 模块的日志。可以指定多个模块，模块名称之间用英文逗号加一个空格分隔。|
+|audit_log_roll_interval|DAY|审计日志拆分的时间间隔。取值范围： `DAY` 和 `HOUR`。<ul><li>取值为 `DAY` 时，日志文件名的后缀为 `yyyyMMdd`。</li><li>取值为 `HOUR` 时，日志文件名的后缀为 `yyyyMMddHH`。</li></ul>|
 |audit_log_delete_age|30d|审计日志删除的间隔。|
-|audit_log_roll_mode|TIME-DAY|审计日志拆分模式。|
-|dump_log_dir|StarRocksFE.STARROCKS_HOME_DIR + "/log"|Dump 日志的目录。|
-|dump_log_modules|"query"|Dump 日志打印的模块，默认保留 query。|
-|dump_log_roll_interval|DAY|"Dump 日志拆分的时间间隔。日志文件的后缀为 yyyyMMdd（DAY）或 yyyyMMddHH（HOUR）"。|
-|dump_log_roll_num|10|每个 dump_log_roll_interval 时间内，保留的 Dump 日志文件数目。|
+|dump_log_dir|StarRocksFE.STARROCKS_HOME_DIR + "/log"|Dump 日志文件的保留目录。|
+|dump_log_modules|query|Dump 日志打印的模块。默认打印 query 模块的日志。可以指定多个模块，模块名称之间用英文逗号加一个空格分隔。|
+|dump_log_roll_interval|DAY|Dump 日志拆分的时间间隔。取值范围： `DAY` 和 `HOUR`。<ul><li>取值为 `DAY` 时，日志文件名的后缀为 `yyyyMMdd`。</li><li>取值为 `HOUR` 时，日志文件名的后缀为 `yyyyMMddHH`。</li></ul>|
+|dump_log_roll_num|10|每个 `dump_log_roll_interval` 时间内，保留的 Dump 日志文件的数目。|
 |dump_log_delete_age|7d|Dump 日志保留的时间长度。|
 
 #### Server 相关静态参数
 
 |配置项|默认值|描述|
 |---|---|---|
-|frontend_address|0.0.0.0|FE IP 地址。|
-|priority_networks|空字符串|以 CIDR 形式 10.10.10.0/24 指定 FE IP 地址，适用于机器有多个 IP，需要特殊指定的形式。|
+|frontend_address|0.0.0.0|FE 节点的 IP 地址。|
+|priority_networks|空字符串|以 CIDR 形式 `10.10.10.0/24` 指定 FE 节点的 IP 地址，适用于机器有多个 IP 地址，需要特殊指定的形式。|
 |http_port|8030|Http Server 的端口。|
-|http_backlog_num|1024|HTTP Server 的 backlog 队列长度。|
+|http_backlog_num|1024|HTTP Server 的 Backlog 队列长度。|
 |cluster_name|StarRocks Cluster|Web 页面中 Title 显示的集群名称。|
-|rpc_port|9020|FE 上的 thrift server 端口。|
-|thrift_backlog_num|1024|Thrift Server 的 backlog 队列长度。|
-|thrift_server_type|ThriftServer.THREAD_POOL|FE 的 Thrift 服务使用的服务模型，SIMPLE/THREADED/THREAD_POOL。|
-|thrift_server_max_worker_threads|4096|Thrift Server 最大工作线程数。|
-|thrift_client_timeout_ms|0|Client 超时时间，，单位为 ms。设置于 0 时永远不会超时。|
+|rpc_port|9020|FE 节点上的 Thrift Server 端口。|
+|thrift_backlog_num|1024|Thrift Server 的 Backlog 队列长度。|
+|thrift_server_type|THREAD_POOL|FE 节点上的 Thrift Server 使用的服务模型。取值范围：`SIMPLE`、`THREADED`、`THREAD_POOL`。|
+|thrift_server_max_worker_threads|4096|Thrift Server 的最大工作线程数。|
+|thrift_client_timeout_ms|0|Client 超时时间。单位：ms。设置为 `0` 时永远不会超时。|
 |brpc_number_of_concurrent_requests_processed|4096|并发处理 BRPC 请求数目。|
-|brpc_idle_wait_max_time|10000|BRPC 的空闲等待时间，单位为 ms。|
-|enable_brpc_share_channel|TRUE|在 BRPC Client 之间共享 channel。|
-|query_port|9030|FE 上的 mysql server 端口。|
-|mysql_service_nio_enabled|TRUE|FE 连接服务的 nio 是否开启。|
-|mysql_service_io_threads_num|4|FE 连接服务线程数。|
-|mysql_nio_backlog_num|1024|MySQL Server 的 backlog 队列长度。|
+|brpc_idle_wait_max_time|10000|BRPC 的空闲等待时间。单位：ms。|
+|enable_brpc_share_channel|TRUE|指定是否在 BRPC Client 之间共享 Channel。|
+|query_port|9030|FE 节点上的 Mysql Server 端口。|
+|mysql_service_nio_enabled|TRUE|指定 FE 连接服务的异步 I/O 是否开启。|
+|mysql_service_io_threads_num|4|FE 连接服务的最大线程数。|
+|mysql_nio_backlog_num|1024|MySQL Server 的 Backlog 队列长度。|
 |max_mysql_service_task_threads_num|4096|MySQL Server 处理任务的最大线程数。|
 |max_connection_scheduler_threads_num|4096|连接定时器的线程池的最大线程数。|
 |qe_max_connection|1024|FE 上最多接收的连接数，适用于所有用户。|
@@ -228,6 +234,7 @@ ADMIN SET FRONTEND CONFIG ("key" = "value");
 |enable_udf|FALSE|是否开启 UDF。|
 |publish_version_interval_ms|10|发送版本生效任务的时间间隔，单位为 ms。|
 |statistic_cache_columns|100000|缓存统计信息表的行数。|
+|statistic_collect_concurrency|3|手动采集任务的最大并发数，默认为 3，即最多可以有 3 个手动采集任务同时运行。超出的任务处于 PENDING 状态，等待调度。|
 
 #### 导入和导出相关静态参数
 
@@ -282,7 +289,7 @@ ADMIN SET FRONTEND CONFIG ("key" = "value");
 
 ## BE 配置项
 
-部分 BE 节点配置项为动态参数，您可以通过命令在线修改。其他配置项为静态参数，需要通过修改 **be.conf** 文件后重启 FE 服务使相关修改生效。
+部分 BE 节点配置项为动态参数，您可以通过命令在线修改。其他配置项为静态参数，需要通过修改 **be.conf** 文件后重启 BE 服务使相关修改生效。
 
 ### 配置 BE 动态参数
 
@@ -339,7 +346,6 @@ curl -XPOST http://be_host:http_port/api/update_config?configuration_item=value
 | load_error_log_reserve_hours                          | 48          | hour   | 导入数据信息保留的时长。                                     |
 | streaming_load_max_mb                                 | 10240       | MB     | 流式导入单个文件大小的上限。                                 |
 | streaming_load_max_batch_size_mb                      | 100         | MB     | 流式导入单个JSON文件大小的上限。                             |
-| olap_table_sink_send_interval_ms                      | 10          | ms     | 这个配置在代码中没有用到                                     |
 | memory_maintenance_sleep_time_s                       | 10          | second | 触发Tcmalloc GC任务的时间间隔。Starrocks会周期运行GC任务，尝试将Tcmalloc的空闲内存返还给操作系统。 |
 | write_buffer_size                                     | 104857600   | Byte   | MemTable在内存中的buffer大小，超过这个限制会触发flush。      |
 | tablet_stat_cache_update_interval_second              | 300         | second | Tablet Stat Cache的更新间隔。                                |
@@ -396,7 +402,6 @@ curl -XPOST http://be_host:http_port/api/update_config?configuration_item=value
 |num_threads_per_core|3|每个 CPU core 启动的线程数|
 |compress_rowbatches|TRUE|BE 之间 rpc 通信是否压缩 RowBatch，用于查询层之间的数据传输|
 |serialize_batch|FALSE|BE 之间 rpc 通信是否序列化 RowBatch，用于查询层之间的数据传输|
-|memory_limitation_per_thread_for_schema_change|2|单个 schema change 任务允许占用的最大内存|
 |max_unpacked_row_block_size|104857600|单个 block 最大的字节数，100MB|
 |file_descriptor_cache_clean_interval|3600|文件句柄缓存清理的间隔，用于清理长期不用的文件句柄|
 |storage_root_path|${STARROCKS_HOME}/storage|存储数据的目录，多块盘配置使用分隔符 `;` 间隔，例如：/data1/starrocks;/data2/starrocks。如果为 SSD 磁盘，需在路径后添加 `.SSD`，如果为 HDD 磁盘，需在路径后添加 `.HDD`。|

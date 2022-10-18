@@ -445,7 +445,7 @@ StarRocks 支持对目标表进行谓词下推，把过滤条件推给目标表�
 | DATE                | DATE      |
 | CHAR                | CHAR      |
 | VARCHAR             | VARCHAR   |
-| TEXT                | STRING    |
+| TEXT                | VARCHAR   |
 
 #### **目标数据库为 SQL Server**
 
@@ -688,7 +688,7 @@ select count(*) from profile_wos_p7;
 
 ### 缓存更新
 
-Hive Table 的 Partition 统计信息以及 Partition 下面的文件信息可以缓存到 StarRocks FE 中，缓存的内存结构为 Guava LoadingCache。您可以在 fe.conf 文件中通过设置`hive_meta_cache_refresh_interval_s`参数修改缓存自动刷新的间隔时间（默认值为`7200`, 单位：秒），也可以通过设置`hive_meta_cache_ttl_s`参数修改缓存的失效时间（默认值为`86400`，单位：秒）。修改后需重启 FE 生效。
+Hive Table 的 Partition 统计信息以及 Partition 下面的文件信息可以缓存到 StarRocks FE 中，缓存的内存结构为 Guava LoadingCache。您可以在 fe.conf 文件中通过设置`hive_meta_cache_refresh_interval_s`参数修改缓存自动刷新的间隔时间（默认值为`7200`，单位：秒），也可以通过设置`hive_meta_cache_ttl_s`参数修改缓存的失效时间（默认值为`86400`，单位：秒）。修改后需重启 FE 生效。
 
 #### 手动更新元数据缓存
 
@@ -898,23 +898,24 @@ PROPERTIES (
 
 创建外部表时，需根据 Iceberg 表的列类型指定 StarRocks 中外部表的列类型，具体映射关系如下：
 
-| **Iceberg**    | **StarRocks**            |
-| -------------- | ------------------------ |
-| BOOLEAN        | BOOLEAN                  |
-| INT            | TINYINT/SMALLINT/INT |
-| LONG           | BIGINT                   |
-| FLOAT          | FLOAT                    |
-| DOUBLE         | DOUBLE                   |
-| DECIMAL(P, S)  | DECIMAL                  |
-| DATE           | DATE/DATETIME          |
-| TIME           | BIGINT                   |
-| TIMESTAMP      | DATETIME                 |
-| STRING         | STRING/VARCHAR         |
-| UUID           | STRING/VARCHAR         |
-| FIXED(L)       | CHAR                     |
-| BINARY         | VARCHAR                  |
+| **Iceberg**   | **StarRocks**        |
+|---------------|----------------------|
+| BOOLEAN       | BOOLEAN              |
+| INT           | TINYINT/SMALLINT/INT |
+| LONG          | BIGINT               |
+| FLOAT         | FLOAT                |
+| DOUBLE        | DOUBLE               |
+| DECIMAL(P, S) | DECIMAL              |
+| DATE          | DATE/DATETIME        |
+| TIME          | BIGINT               |
+| TIMESTAMP     | DATETIME             |
+| STRING        | STRING/VARCHAR       |
+| UUID          | STRING/VARCHAR       |
+| FIXED(L)      | CHAR                 |
+| BINARY        | VARCHAR              |
+| LIST          | ARRAY                |
 
-StarRocks 不支持查询以下类型的数据： TIMESTAMPTZ、STRUCT、LIST 和 MAP。
+StarRocks 不支持查询以下类型的数据： TIMESTAMPTZ、STRUCT 和 MAP。
 
 #### 步骤四：查询 Iceberg 数据
 

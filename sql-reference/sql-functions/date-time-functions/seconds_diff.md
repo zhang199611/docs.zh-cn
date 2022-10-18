@@ -2,28 +2,28 @@
 
 ## 功能
 
-计算 `expr1` - `expr2`，结果精确到秒。
+计算开始时间和结束时间相差多少秒 (`expr1` − `expr2`)。
 
 ## 语法
 
 ```Haskell
-seconds_diff(expr1,expr2);
+BIGINT seconds_diff(DATETIME expr1, DATETIME expr2);
 ```
 
 ## 参数说明
 
-`expr1`: 支持的数据类型为 DATETIME。
+`expr1`: 结束时间，支持的数据类型为 DATETIME。
 
-`expr2`: 支持的数据类型为 DATETIME。
+`expr2`: 开始时间，支持的数据类型为 DATETIME。
 
 ## 返回值说明
 
-返回值的数据类型为 BIGINT。
+返回值的数据类型为 BIGINT。如果日期不存在，则返回 NULL。
 
 ## 示例
 
 ```Plain Text
-mysql> select seconds_diff('2010-11-30 23:59:59', '2010-11-30 20:59:59');
+select seconds_diff('2010-11-30 23:59:59', '2010-11-30 20:59:59');
 +------------------------------------------------------------+
 | seconds_diff('2010-11-30 23:59:59', '2010-11-30 20:59:59') |
 +------------------------------------------------------------+
