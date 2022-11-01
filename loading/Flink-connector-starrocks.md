@@ -20,7 +20,7 @@ flink-connector-starrocks 的内部实现是通过缓存并批量由 stream load
 
 点击 [版本信息](https://search.maven.org/search?q=g:com.starrocks) 查看页面Latest Version信息，替换下面x.x.x内容
 
-```Plan text
+```Plain text
 <dependency>
     <groupId>com.starrocks</groupId>
     <artifactId>flink-connector-starrocks</artifactId>
